@@ -65,22 +65,20 @@
 (define (wave-format wav)
   (cond
     [(send wav chunk-ref #"fmt ")]
-    [(error "wave has no format information")]))
+    [else (error "wave has no format information")]))
 
 (define-values (wave-channels wave-sample-rate wave-bits)
-  (let ([make-ref (λ (name field)
+  (let ([make-ref (λ (field)
                     (λ (wav)
                       (dynamic-get-field field (wave-format wav))))])
-    (values (make-ref 'wave-channels 'channels)
-            (make-ref 'wave-sample-rate 'samples-per-sec)
-            (make-ref 'wave-bits 'bits-per-sample))))
+    (apply values (map make-ref '(channels samples-per-sec bits-per-sample)))))
 
 (define (in-wave-channel wav ch)
   (unless (< ch (wave-channels wav))
     (error 'in-wave-channel "channel number out of range: ~a" ch))
   (define data-chunk (send wav chunk-ref #"data"))
   (unless data-chunk
-    (error 'in-wave-samples "wave has no samples"))
+    (error 'in-wave-channel "wave has no samples"))
   (define fmt (wave-format wav))
   (define bits (get-field bits-per-sample fmt))
   (define bytes-per-sample (exact-ceiling (/ bits 8)))
