@@ -43,8 +43,14 @@ Represents a raw chunk.
 
 @defclass[riff:list% riff% ()]{
 Represents a list chunk.
+
 @defconstructor/auto-super[([type bytes?]
                             [chunks (listof (is-a?/c riff%))])]
+
+@defmethod[(chunk-ref [id bytes?] ...+) (or/c (is-a?/c riff%) #f)]{
+Returns the first sub-chunk with ID matching @racket[id]. If multiple
+@racket[id]s are supplied, they refer to nested sub-chunks.
+}
 }
 
 @defthing[fourcc binary? #:value (bytestring 4)]{
