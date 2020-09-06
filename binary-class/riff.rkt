@@ -61,7 +61,7 @@
       [(= pos end) '()]
       [else (cons (read-value riff% in) (next-chunk))])))
 
-(define (write-riff-list out chunks)
+(define (write-riff-list chunks out)
   (for ([v (in-list chunks)])
     (send v write out)))
 
